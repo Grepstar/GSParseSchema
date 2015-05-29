@@ -15,6 +15,7 @@ PARSE_CLASS_PREFIX = "PF"
 def main():
     assert PARSE_APP_ID, 'PARSE_APP_ID is blank!  Visit https://www.parse.com to obtain your keys.'
     assert PARSE_MASTER_KEY, 'PARSE_MASTER_KEY is blank! Visit https://www.parse.com to obtain your keys.'
+    assert CUSTOM_CLASS_PREFIX, 'CUSTOM_CLASS_PREFIX is blank!  You should probably use a custom prefix.'
 
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
