@@ -3,6 +3,35 @@ Parse Schema Swift subclass generation.
 
 A simple python script to generate Swift subclasses from your Parse App Schema.
 
+## Example
+GSAddress.swift
+```swift
+import Parse
+
+class GSAddress : PFObject, PFSubclassing {
+	override class func initialize() {
+		struct Static {
+			static var onceToken : dispatch_once_t = 0;
+		}
+		dispatch_once(&Static.onceToken) {
+			self.registerSubclass()
+		}
+
+	class func parseClassName() -> String {
+		return "Address"
+	}
+
+	// MARK: Properties
+
+	@NSManaged var line1: String?
+	@NSManaged var line2: String?
+	@NSManaged var city: String?
+	@NSManaged var state: String?
+	@NSManaged var zipCode: NSNumber?
+	@NSManaged var country: String?
+}
+```
+
 ## Usage
 Edit main.py and customize the variables below.  Then run it!
 ```
