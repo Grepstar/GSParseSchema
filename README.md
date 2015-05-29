@@ -8,19 +8,19 @@ Edit main.py and customize the variables below.  Then run it!
 ```
 $ python main.py
 ```
-Voila!  You're custom classes will be generated in the Swift/ folder.  Drag and drop these into your project.
+Voila!  You're custom classes will be generated in a local `Swift/` folder.  Drag and drop these into your project.
 
 ### `PARSE_APP_ID`
 Your Parse Application ID
 
 ### `PARSE_MASTER_KEY`
-Your Parse Master Key - NEVER GIVE THIS TO ANYONE AND DO NOT SAVE IT TO YOUR REPO
+Your Parse Master Key - **NEVER GIVE THIS TO ANYONE AND DO NOT SAVE IT TO YOUR REPO**
 
 ### `CUSTOM_CLASS_PREFIX`
 The prefix to use for your Subclasses
 
 ### `SHOULD_SUBCLASS_USER`
-If True, PFUser will be subclassed as `CUSTOM_CLASS_PREFIX`User
+If True, PFUser will be subclassed as <`CUSTOM_CLASS_PREFIX`>User
 
 ## Features
 - Custom subclass prefix
