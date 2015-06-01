@@ -3,19 +3,42 @@ __email__ = 'daniel.hallman@grepstar.net'
 
 import json, httplib, os
 
+from optparse import OptionParser
+
 # Custom variables (you should change these)
 PARSE_APP_ID = ""
 PARSE_MASTER_KEY = "" # DO NOT GIVE THIS TO ANYONE!
-CUSTOM_CLASS_PREFIX = "GS"
+CUSTOM_CLASS_PREFIX = ""
 SHOULD_SUBCLASS_USER = True
 
 # Parse constants
 PARSE_CLASS_PREFIX = "PF"
 
 def main():
-    assert PARSE_APP_ID, 'PARSE_APP_ID is blank!  Visit https://www.parse.com to obtain your keys.'
-    assert PARSE_MASTER_KEY, 'PARSE_MASTER_KEY is blank! Visit https://www.parse.com to obtain your keys.'
-    assert CUSTOM_CLASS_PREFIX, 'CUSTOM_CLASS_PREFIX is blank!  You should probably use a custom prefix.'
+    parser = OptionParser()
+    parser.add_option("-a", "--parseappid", dest="parse_app_id",
+                      help="Parse App ID",)
+    parser.add_option("-m", "--parsemaster", dest="parse_master_key",
+                      help="Parse Master Key",)
+    parser.add_option("-p", "--prefix", dest="custom_class_prefex",
+                      help="Custom Class Prefix",)
+
+    (options, args) = parser.parse_args()
+
+    if options.parse_app_id:
+        PARSE_APP_ID = options.parse_app_id
+    else:
+        assert False, 'PARSE_APP_ID is blank!  Visit https://www.parse.com to obtain your keys.'
+
+    if options.parse_master_key:
+        PARSE_MASTER_KEY = options.parse_master_key
+    else:
+        assert False, 'PARSE_MASTER_KEY is blank!  Visit https://www.parse.com to obtain your keys.'
+
+    if options.custom_class_prefex:
+        CUSTOM_CLASS_PREFIX = options.custom_class_prefex
+    else:
+        assert False, 'CUSTOM_CLASS_PREFIX is blank!  You should probably use a custom prefix.'
 
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
@@ -45,7 +68,7 @@ def main():
         fileName = customClass + '.swift'
         filePath = 'Swift/' + fileName
 
-        print 'Generate {} --> {}'.format(filePath, className)
+        print 'Generate subclass for {} --> {}'.format(className, filePath)
 
         source = 'import Parse\n\n'
 
@@ -61,7 +84,8 @@ def main():
         source += '\t\t}\n'
         source += '\t\tdispatch_once(&Static.onceToken) {\n'
         source += '\t\t\tself.registerSubclass()\n'
-        source += '\t\t}\n\n'
+        source += '\t\t}\n'
+        source += '\t}\n\n'
 
         # Only necessary for PFObject subclasses
         if not isUserClass:
