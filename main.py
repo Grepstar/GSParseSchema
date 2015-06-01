@@ -119,11 +119,11 @@ def main():
             elif type == 'File':
                 swiftType = 'PFFile?'
             elif type == 'Pointer':
-                typeClass = parse_to_custom_class_name(fieldDict['targetClass'])
+                typeClass = parse_to_custom_class_name(fieldDict['targetClass'], CUSTOM_CLASS_PREFIX, SHOULD_SUBCLASS_USER)
                 if typeClass:
                     swiftType = typeClass + '?'
             elif type == 'Relation':
-                typeClass = parse_to_custom_class_name(fieldDict['targetClass'])
+                typeClass = parse_to_custom_class_name(fieldDict['targetClass'], CUSTOM_CLASS_PREFIX, SHOULD_SUBCLASS_USER)
                 if typeClass:
                     swiftType = '[' + typeClass + ']'
             elif type == 'Array':
@@ -146,13 +146,13 @@ def main():
         file.write(source)
         file.close()
 
-def parse_to_custom_class_name(className=''):
-    if SHOULD_SUBCLASS_USER and className == '_User':
-        return CUSTOM_CLASS_PREFIX + className[1:]
+def parse_to_custom_class_name(className='', prefix='', shouldSubclassUser=False):
+    if shouldSubclassUser and className == '_User':
+        return prefix + className[1:]
     elif className.startswith('_'):
         return ''
     else:
-        return CUSTOM_CLASS_PREFIX + className
+        return prefix + className
 
 if __name__ == '__main__':
     main()
