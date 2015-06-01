@@ -141,6 +141,9 @@ def main():
         if not os.path.exists(dir):
             os.makedirs(dir)
 
+        # Remove old file if it exists
+        os.remove(filePath)
+
         # Open file
         file = open(filePath, 'w')
         file.write(source)
