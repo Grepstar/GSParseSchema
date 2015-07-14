@@ -81,7 +81,7 @@ class GSUser : PFUser {
 
 ### Generate subclasses
 ```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <CUSTOM_CLASS_PREFIX> -o -u
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -o -u
 ```
 Your custom classes will be generated in a local `Swift/` folder.  
 
@@ -112,11 +112,11 @@ Your Parse Application ID
 #### `-m` `PARSE_MASTER_KEY`
 Your Parse Master Key - **NEVER GIVE THIS TO ANYONE AND DO NOT SAVE IT TO YOUR REPO**
 
-#### `-p` `CUSTOM_CLASS_PREFIX`
+#### `-p` `SUBCLASS_PREFIX`
 The prefix to use for your Subclasses
 
 #### `-u` `SHOULD_SUBCLASS_USER`
-PFUser will be subclassed as <`CUSTOM_CLASS_PREFIX`>User
+PFUser will be subclassed as <`SUBCLASS_PREFIX`>User
 
 #### `-o` `USE_OPTIONALS`
 Declare properties as optionals `?`

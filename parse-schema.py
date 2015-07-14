@@ -17,8 +17,8 @@ def main():
                       help="Parse App ID",)
     parser.add_option("-m", "--parsemaster", dest="parse_master_key",
                       help="Parse Master Key",)
-    parser.add_option("-p", "--prefix", dest="custom_class_prefex",
-                      help="Custom Class Prefix",)
+    parser.add_option("-p", "--prefix", dest="subclass_prefix",
+                      help="Subclass Prefix",)
     parser.add_option("-o", "--optionals", action="store_true", dest="optionals",
                       help="Declare properties as optionals",)
     parser.add_option("-u", "--user", action="store_true", dest="subclass_user",
@@ -36,10 +36,10 @@ def main():
     else:
         assert False, 'PARSE_MASTER_KEY is blank!  Visit https://www.parse.com to obtain your keys.'
 
-    if options.custom_class_prefex:
-        CUSTOM_CLASS_PREFIX = options.custom_class_prefex
+    if options.subclass_prefix:
+        SUBCLASS_PREFIX = options.subclass_prefix
     else:
-        assert False, 'CUSTOM_CLASS_PREFIX is blank!  You should probably use a custom prefix.'
+        assert False, 'SUBCLASS_PREFIX is blank!  You should probably use a custom prefix.'
 
     if options.optionals:
         USE_OPTIONALS = options.optionals
@@ -63,7 +63,7 @@ def main():
     schemas = result['results']
 
     # Array of subclasses
-    customClasses = []
+    subclasses = []
 
     for schema in schemas:
         className = schema['className']
@@ -78,9 +78,9 @@ def main():
         elif className.startswith('_'):
             continue
 
-        customClass = CUSTOM_CLASS_PREFIX + className
-        customClasses.append(customClass)
-        fileName = customClass + '.swift'
+        subclass = SUBCLASS_PREFIX + className
+        subclasses.append(subclass)
+        fileName = subclass + '.swift'
         filePath = 'Swift/' + fileName
 
 
@@ -98,9 +98,9 @@ def main():
 
         # Inheritance
         if isUserClass:
-            source += 'class ' + customClass + ' : PFUser {\n\n'
+            source += 'class ' + subclass + ' : PFUser {\n\n'
         else:
-            source += 'class ' + customClass + ' : PFObject, PFSubclassing {\n\n'
+            source += 'class ' + subclass + ' : PFObject, PFSubclassing {\n\n'
 
         source += '\toverride class func initialize() {\n'
         source += '\t\tstruct Static {\n'
@@ -145,10 +145,10 @@ def main():
             elif type == 'File':
                 swiftType = 'PFFile'
             elif type == 'Pointer':
-                typeClass = parse_to_custom_class_name(fieldDict['targetClass'], CUSTOM_CLASS_PREFIX, SHOULD_SUBCLASS_USER)
+                typeClass = parse_to_subclass_name(fieldDict['targetClass'], SUBCLASS_PREFIX, SHOULD_SUBCLASS_USER)
                 swiftType = typeClass
             elif type == 'Relation':
-                typeClass = parse_to_custom_class_name(fieldDict['targetClass'], CUSTOM_CLASS_PREFIX, SHOULD_SUBCLASS_USER)
+                typeClass = parse_to_subclass_name(fieldDict['targetClass'], SUBCLASS_PREFIX, SHOULD_SUBCLASS_USER)
                 swiftType = '[{}]'.format(typeClass)
             elif type == 'Array':
                 swiftType = '[AnyObject]'
@@ -187,10 +187,10 @@ def main():
         file.close()
 
     # Generate the subclass registration extension
-    generateParseExtension(customClasses, today)
+    generateParseExtension(subclasses, today)
 
 # Generate the subclass registration extension
-def generateParseExtension(customClasses=[], today=''):
+def generateParseExtension(subclasses=[], today=''):
     fileName = 'Parse+Subclasses.swift'
     filePath = 'Swift/' + fileName
     source = ''
@@ -207,8 +207,8 @@ def generateParseExtension(customClasses=[], today=''):
     source += '\t// Call this function before \'Parse.setApplicationId(applicationId: String, clientKey: String)\' in your AppDelegate\n'
     source += '\tclass func registerSubclasses() {\n'
 
-    for customClass in customClasses:
-        source += '\t\t{}.registerSubclass()\n'.format(customClass)
+    for subclass in subclasses:
+        source += '\t\t{}.registerSubclass()\n'.format(subclass)
 
     source += '\t}\n'
     source += '}'
@@ -233,7 +233,7 @@ def generateHeaderSource(fileName='', today=''):
     return source
 
 # Helper method to determine subclass name from the Parse model
-def parse_to_custom_class_name(className='', prefix='', shouldSubclassUser=False):
+def parse_to_subclass_name(className='', prefix='', shouldSubclassUser=False):
     if shouldSubclassUser and className == '_User':
         return prefix + className[1:]
     elif className.startswith('_'):
