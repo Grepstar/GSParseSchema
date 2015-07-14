@@ -78,11 +78,31 @@ class GSUser : PFUser {
 ```
 
 ## Usage
-Edit main.py and customize the variables below.  Then run it!
 ```
-$ python main.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <CUSTOM_CLASS_PREFIX> -o -u
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <CUSTOM_CLASS_PREFIX> -o -u
 ```
-Voila!  Your custom classes will be generated in a local `Swift/` folder.  Drag and drop these into your project.
+Your custom classes will be generated in a local `Swift/` folder.  
+
+Drag and drop the contents into your Xcode project.
+
+		Parse.setApplicationId(info["PARSE_APPLICATION_ID"] as! String, clientKey: info["PARSE_CLIENT_KEY"] as! String)
+
+Register your subclasses in your AppDelegate.swift before `Parse.setApplicationId(applicationId: String, clientKey: String)`
+```swift
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+	var window: UIWindow?
+    
+	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool
+	{
+        Parse.registerSubclasses()
+        
+        ...
+        
+    }
+}
+```
 
 ### `-a` `PARSE_APP_ID`
 Your Parse Application ID
