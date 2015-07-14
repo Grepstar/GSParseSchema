@@ -6,7 +6,10 @@ A simple python script to generate Swift subclasses from your Parse App Schema.
 Tested with Swift 2.0 and Xcode 7-beta.
 
 ## Example
-GSAddress.swift auto-generated from Parse Data Schema
+
+Auto-generated classes from Parse Data Schema
+
+GSAddress.swift
 ```swift
 import Parse
 
@@ -49,7 +52,7 @@ class GSAddress : PFObject, PFSubclassing {
 }
 ```
 
-GSUser.swift auto-generated from Parse Data Schema
+GSUser.swift
 ```swift
 import Parse
 
@@ -76,6 +79,20 @@ class GSUser : PFUser {
 
 	@NSManaged var address: GSAddress?
 
+}
+```
+
+Parse+Subclasses.swift
+```swift
+import Parse
+
+extension Parse {
+
+	// Call this function before setApplicationId:clientKey: in your AppDelegate
+	class func registerSubclasses() {
+		GSAddress.registerSubclass()
+		GSUser.registerSubclass()
+	}
 }
 ```
 
