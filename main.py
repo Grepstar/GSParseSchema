@@ -74,9 +74,9 @@ def main():
 
         # Inheritance
         if isUserClass:
-            source += 'class ' + customClass + ' : PFUser, PFSubclassing {\n'
+            source += 'class ' + customClass + ' : PFUser {\n\n'
         else:
-            source += 'class ' + customClass + ' : PFObject, PFSubclassing {\n'
+            source += 'class ' + customClass + ' : PFObject, PFSubclassing {\n\n'
 
         source += '\toverride class func initialize() {\n'
         source += '\t\tstruct Static {\n'
@@ -105,13 +105,15 @@ def main():
                 continue
 
             type = fieldDict['type']
+            declareAsManaged = True
 
             if type == 'String':
                 swiftType =  'String?'
             elif type == 'Number':
                 swiftType = 'NSNumber?'
             elif type == 'Boolean':
-                swiftType = 'Bool?'
+                swiftType = 'Bool'
+                declareAsManaged = False
             elif type == 'Date':
                 swiftType = 'NSDate?'
             elif type == 'GeoPoint':
@@ -132,7 +134,13 @@ def main():
                 print '\tunhandled field: {} {}'.format(field, str(fieldDict))
                 continue
 
-            source += '\t@NSManaged var {}: {}\n'.format(field, swiftType)
+            # Property declaration
+            if declareAsManaged:
+                source += '\t@NSManaged var {}: {}'.format(field, swiftType)
+            else:
+                source += '\tvar {0}: {1}? {{\n\t\tget {{ return self["{0}"] as? {1} }}\n\t\tset {{ return self["{0}"] = newValue }}\n\t}}'.format(field, swiftType)
+
+            source += '\n\n'
 
         source += '}'
 
@@ -142,7 +150,8 @@ def main():
             os.makedirs(dir)
 
         # Remove old file if it exists
-        os.remove(filePath)
+        if os.path.exists(filePath):
+            os.remove(filePath)
 
         # Open file
         file = open(filePath, 'w')

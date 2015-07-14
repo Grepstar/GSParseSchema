@@ -8,7 +8,8 @@ GSAddress.swift
 ```swift
 import Parse
 
-class GSAddress : PFObject, PFSubclassing {
+class CNAddress : PFObject, PFSubclassing {
+
 	override class func initialize() {
 		struct Static {
 			static var onceToken : dispatch_once_t = 0;
@@ -16,6 +17,7 @@ class GSAddress : PFObject, PFSubclassing {
 		dispatch_once(&Static.onceToken) {
 			self.registerSubclass()
 		}
+	}
 
 	class func parseClassName() -> String {
 		return "Address"
@@ -23,12 +25,25 @@ class GSAddress : PFObject, PFSubclassing {
 
 	// MARK: Properties
 
-	@NSManaged var line1: String?
-	@NSManaged var line2: String?
 	@NSManaged var city: String?
-	@NSManaged var state: String?
-	@NSManaged var zipCode: NSNumber?
+
 	@NSManaged var country: String?
+
+	@NSManaged var stateAbbrevation: String?
+
+	@NSManaged var line2: String?
+
+	@NSManaged var line1: String?
+
+	@NSManaged var zipCode: NSNumber?
+
+	var valid: Bool? {
+		get { return self["valid"] as? Bool }
+		set { return self["valid"] = newValue }
+	}
+
+	@NSManaged var location: PFGeoPoint?
+
 }
 ```
 
