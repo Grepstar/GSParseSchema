@@ -85,8 +85,6 @@ Your custom classes will be generated in a local `Swift/` folder.
 
 Drag and drop the contents into your Xcode project.
 
-		Parse.setApplicationId(info["PARSE_APPLICATION_ID"] as! String, clientKey: info["PARSE_CLIENT_KEY"] as! String)
-
 Register your subclasses in your AppDelegate.swift before `Parse.setApplicationId(applicationId: String, clientKey: String)`
 ```swift
 @UIApplicationMain
