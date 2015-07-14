@@ -78,13 +78,16 @@ class GSUser : PFUser {
 ```
 
 ## Usage
+
+### Generate subclasses
 ```
 $ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <CUSTOM_CLASS_PREFIX> -o -u
 ```
 Your custom classes will be generated in a local `Swift/` folder.  
 
-Drag and drop the contents into your Xcode project.
+### Add files to your Xcode project
 
+### Call `Parse.registerSubclasses()` in your AppDelegate
 Register your subclasses in your AppDelegate.swift before `Parse.setApplicationId(applicationId: String, clientKey: String)`
 ```swift
 @UIApplicationMain
@@ -95,26 +98,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool
 	{
         Parse.registerSubclasses()
-        
+        Parse.setApplicationId(applicationId: String, clientKey: String)
+       
         ...
-        
+         
     }
 }
 ```
 
-### `-a` `PARSE_APP_ID`
+#### `-a` `PARSE_APP_ID`
 Your Parse Application ID
 
-### `-m` `PARSE_MASTER_KEY`
+#### `-m` `PARSE_MASTER_KEY`
 Your Parse Master Key - **NEVER GIVE THIS TO ANYONE AND DO NOT SAVE IT TO YOUR REPO**
 
-### `-p` `CUSTOM_CLASS_PREFIX`
+#### `-p` `CUSTOM_CLASS_PREFIX`
 The prefix to use for your Subclasses
 
-### `-u` `SHOULD_SUBCLASS_USER`
+#### `-u` `SHOULD_SUBCLASS_USER`
 PFUser will be subclassed as <`CUSTOM_CLASS_PREFIX`>User
 
-### `-o` `USE_OPTIONALS`
+#### `-o` `USE_OPTIONALS`
 Declare properties as optionals `?`
 
 
@@ -123,3 +127,9 @@ Declare properties as optionals `?`
 - Internal Parse classes are skipped: _User, _Session, _Role, _Installation)
 - Internal Parse fields are skipped: 'objectId', 'ACL', 'createdAt', 'updatedAt'
 - Internal Parse PFUser fields are skipped: 'authData', 'email', 'emailVerified', 'username', 'password', 'role'
+
+## TODO
+- Use file templates instead of string concatenation for generating source code
+- Create boilerplate Swift extensions for adding addtional methods
+- Create brew package
+- Document `Add Script` build phase for auto-generation in Xcode project
