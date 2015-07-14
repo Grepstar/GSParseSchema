@@ -3,6 +3,8 @@ Parse Schema Swift subclass generation.
 
 A simple python script to generate Swift subclasses from your Parse App Schema.
 
+Tested with Swift 2.0 and Xcode 7-beta.
+
 ## Example
 GSAddress.swift auto-generated from Parse Data Schema
 ```swift
