@@ -52,7 +52,7 @@ Edit main.py and customize the variables below.  Then run it!
 ```
 $ python main.py
 ```
-Voila!  You're custom classes will be generated in a local `Swift/` folder.  Drag and drop these into your project.
+Voila!  Your custom classes will be generated in a local `Swift/` folder.  Drag and drop these into your project.
 
 ### `PARSE_APP_ID`
 Your Parse Application ID
