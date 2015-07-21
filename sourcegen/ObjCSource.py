@@ -88,7 +88,7 @@ class ObjCSource(LanguageSource.LanguageSource):
             if isPointer:
                 source += '@property (nonatomic, strong) {} *{};\n'.format(languageType, field)
             else:
-                source += '@property (nonatomic, strong) {} {};\n'.format(languageType, field)
+                source += '@property (nonatomic, assign) {} {};\n'.format(languageType, field)
 
         source += '\n@end\n\n'
 

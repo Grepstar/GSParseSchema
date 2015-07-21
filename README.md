@@ -160,7 +160,7 @@ GSAddress.h
 @property (nonatomic, strong) NSString *line2;
 @property (nonatomic, strong) NSString *line1;
 @property (nonatomic, strong) NSNumber *zipCode;
-@property (nonatomic, strong) BOOL valid;
+@property (nonatomic, assign) BOOL valid;
 @property (nonatomic, strong) PFGeoPoint *location;
 
 @end
