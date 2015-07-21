@@ -114,6 +114,17 @@ class ObjCSource(LanguageSource.LanguageSource):
         # Implementation
         source += '\n@implementation ' + subclassName + '\n\n'
 
+        # Register subclass
+        source += '+ (void)load {\n'
+        source += '\t[self registerSubclass];\n'
+        source += '}\n\n'
+
+        # Parse Subclassing
+        source += '+ (NSString *)parseClassName {\n'
+        source += '\treturn @"{}";\n'.format(parseClassName)
+        source += '}\n\n'
+
+        # Properties
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields

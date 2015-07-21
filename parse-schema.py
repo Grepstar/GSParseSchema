@@ -54,6 +54,17 @@ def main():
     else:
         LANGUAGE = "swift"
 
+    # email = ''
+    # password = ''
+    # connection = httplib.HTTPSConnection('api.parse.com', 443)
+    # connection.connect()
+    # connection.request('GET', '/1/apps', "", {
+    #        "X-Parse-Email": email,
+    #        "X-Parse-Password": password,
+    #        "Content-Type": "application/json"
+    #      })
+    # result = json.loads(connection.getresponse().read())
+
     connection = httplib.HTTPSConnection('api.parse.com', 443)
     connection.connect()
     connection.request('GET', '/1/schemas', "", {

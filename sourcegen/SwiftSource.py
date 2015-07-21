@@ -102,7 +102,7 @@ class SwiftSource(LanguageSource.LanguageSource):
                 else:
                     source += '\tvar {0}: {1} {{\n\t\tget {{ return self["{0}"] as! {1} }}\n\t\tset {{ return self["{0}"] = newValue }}\n\t}}'.format(field, languageType)
 
-            source += '\n\n'
+            source += '\n'
 
         source += '}'
 

@@ -85,22 +85,15 @@ class GSAddress : PFObject, PFSubclassing {
 	// MARK: Properties
 
 	@NSManaged var city: String?
-
 	@NSManaged var country: String?
-
 	@NSManaged var stateAbbrevation: String?
-
 	@NSManaged var line2: String?
-
 	@NSManaged var line1: String?
-
 	@NSManaged var zipCode: NSNumber?
-
 	var valid: Bool? {
 		get { return self["valid"] as? Bool }
 		set { return self["valid"] = newValue }
 	}
-
 	@NSManaged var location: PFGeoPoint?
 
 }
@@ -124,13 +117,9 @@ class GSUser : PFUser {
 	// MARK: Properties
 
 	@NSManaged var firstName: String?
-
 	@NSManaged var lastName: String?
-
 	@NSManaged var profileImage: PFFile?
-
 	@NSManaged var phone: NSNumber?
-
 	@NSManaged var address: GSAddress?
 
 }
@@ -158,90 +147,95 @@ $ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PR
 Auto-generated classes from Parse Data Schema
 
 GSAddress.h
-```swift
-import Parse
+```objective-c
+#import <Parse/Parse.h>
 
-class GSAddress : PFObject, PFSubclassing {
+@interface GSAddress : PFObject<PFSubclassing>
 
-	override class func initialize() {
-		struct Static {
-			static var onceToken : dispatch_once_t = 0;
-		}
-		dispatch_once(&Static.onceToken) {
-			self.registerSubclass()
-		}
-	}
++ (NSString *)parseClassName;
 
-	class func parseClassName() -> String {
-		return "Address"
-	}
+@property (nonatomic, strong) NSString *city;
+@property (nonatomic, strong) NSString *country;
+@property (nonatomic, strong) NSString *stateAbbrevation;
+@property (nonatomic, strong) NSString *line2;
+@property (nonatomic, strong) NSString *line1;
+@property (nonatomic, strong) NSNumber *zipCode;
+@property (nonatomic, strong) BOOL valid;
+@property (nonatomic, strong) PFGeoPoint *location;
 
-	// MARK: Properties
-
-	@NSManaged var city: String?
-
-	@NSManaged var country: String?
-
-	@NSManaged var stateAbbrevation: String?
-
-	@NSManaged var line2: String?
-
-	@NSManaged var line1: String?
-
-	@NSManaged var zipCode: NSNumber?
-
-	var valid: Bool? {
-		get { return self["valid"] as? Bool }
-		set { return self["valid"] = newValue }
-	}
-
-	@NSManaged var location: PFGeoPoint?
-
-}
+@end
 ```
 
-GSUser.swift
-```swift
-import Parse
+GSAddress.m
+```objective-c
+#import "GSAddress.h"
+#import <Parse/PFObject+Subclass.h>
 
-class GSUser : PFUser {
+@implementation GSAddress
 
-	override class func initialize() {
-		struct Static {
-			static var onceToken : dispatch_once_t = 0;
-		}
-		dispatch_once(&Static.onceToken) {
-			self.registerSubclass()
-		}
-	}
-
-	// MARK: Properties
-
-	@NSManaged var firstName: String?
-
-	@NSManaged var lastName: String?
-
-	@NSManaged var profileImage: PFFile?
-
-	@NSManaged var phone: NSNumber?
-
-	@NSManaged var address: GSAddress?
-
++ (void)load {
+	[self registerSubclass];
 }
+
++ (NSString *)parseClassName {
+	return @"Address";
+}
+
+@dynamic city;
+@dynamic country;
+@dynamic stateAbbrevation;
+@dynamic line2;
+@dynamic line1;
+@dynamic zipCode;
+@dynamic valid;
+@dynamic location;
+
+@end
 ```
 
-Parse+Subclasses.swift
-```swift
-import Parse
+GSUser.h
+```objective-c
+#import <Parse/Parse.h>
 
-extension Parse {
+@class CNAddress;
 
-	// Call this function before setApplicationId:clientKey: in your AppDelegate
-	class func registerSubclasses() {
-		GSAddress.registerSubclass()
-		GSUser.registerSubclass()
-	}
+@interface CNUser : PFUser
+
++ (NSString *)parseClassName;
+
+@property (nonatomic, strong) NSString *firstName;
+@property (nonatomic, strong) NSString *lastName;
+@property (nonatomic, strong) PFFile *profileImage;
+@property (nonatomic, strong) NSNumber *phone;
+@property (nonatomic, strong) GSAddress *address;
+
+@end
+```
+
+GSUser.m
+```objective-c
+#import "GSUser.h"
+#import <Parse/PFObject+Subclass.h>
+#import ".h"
+#import "GSAddress.h"
+
+@implementation GSUser
+
++ (void)load {
+	[self registerSubclass];
 }
+
++ (NSString *)parseClassName {
+	return @"_User";
+}
+
+@dynamic firstName;
+@dynamic lastName;
+@dynamic profileImage;
+@dynamic phone;
+@dynamic address;
+
+@end
 ```
 
 ## Features
@@ -251,6 +245,9 @@ extension Parse {
 - Internal Parse PFUser fields are skipped: 'authData', 'email', 'emailVerified', 'username', 'password', 'role'
 
 ## TODO
+- Use Email/Password authentication: allows REST API to grab list of Parse Apps
+	- User input for selecting app: extract Parse App ID
+	- Move source code into a folder named after Parse App
 - Use file templates instead of string concatenation for generating source code
 - Create boilerplate Swift extensions for adding addtional methods
 - Create brew package
