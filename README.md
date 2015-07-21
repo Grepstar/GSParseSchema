@@ -10,13 +10,13 @@ Tested with Swift 2.0 and Xcode 7-beta.
 ### Generate subclasses
 Swift
 ```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -o -u -l swift
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l swift
 ```
 Your custom classes will be generated in a local `Swift/` folder.
 
 Objective-C
 ```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -o -u -l objc
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l objc
 ```
 Your custom classes will be generated in a local `ObjC/` folder. 
 
@@ -59,7 +59,7 @@ The programming language to build your subclasses.  Valid inputs are "swift" or 
 
 ## Swift Example
 ```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -o -u -l swift
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l swift
 ```
 Auto-generated classes from Parse Data Schema
 
@@ -152,7 +152,7 @@ extension Parse {
 
 ## ObjC Example
 ```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -o -u -l objc
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l objc
 ```
 
 Auto-generated classes from Parse Data Schema
