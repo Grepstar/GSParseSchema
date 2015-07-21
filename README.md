@@ -216,7 +216,6 @@ GSUser.m
 ```objective-c
 #import "GSUser.h"
 #import <Parse/PFObject+Subclass.h>
-#import ".h"
 #import "GSAddress.h"
 
 @implementation GSUser
