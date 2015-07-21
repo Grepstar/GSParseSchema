@@ -13,7 +13,8 @@ class ObjCSource(LanguageSource.LanguageSource):
 
     def createImplementation(self, schemas=[]):
         super(ObjCSource, self).createImplementation(schemas)
-        #self.generateParseExtension()
+        self.generateSubclassRegistration()
+        self.generateModelsHeader()
 
     def generateSubclass(self, schema, parseClassName='', subclassName='', isUserClass=False, subclassImports=[]):
         self.generateHeaderFile(schema, parseClassName, subclassName, isUserClass, subclassImports)
@@ -26,11 +27,8 @@ class ObjCSource(LanguageSource.LanguageSource):
     def generateHeaderFile(self, schema, parseClassName, subclassName, isUserClass, subclassImports):
         fileName = subclassName + '.h'
 
-        # Source
-        source = ''
-
         # Header
-        source += self.generateComments(fileName)
+        source = self.generateComments(fileName)
 
         # Imports
         source += '#import <Parse/Parse.h>\n\n'
@@ -98,11 +96,8 @@ class ObjCSource(LanguageSource.LanguageSource):
     def generateImplementationFile(self, schema, parseClassName, subclassName, isUserClass, subclassImports):
         fileName = subclassName + '.m'
 
-        # Source
-        source = ''
-
         # Header
-        source += self.generateComments(fileName)
+        source = self.generateComments(fileName)
 
         # Imports
         source += '#import "{}.h"\n'.format(subclassName)
@@ -142,28 +137,27 @@ class ObjCSource(LanguageSource.LanguageSource):
         # Save
         self.saveFile(fileName, source)
 
-    def generateParseExtension(self):
-        fileName = 'Parse+Subclasses.swift'
+    def generateSubclassRegistration(self):
+        print 'Skip Subclass Registration file... is it needed?'
+        # TODO
+        return
+
+        fileName = 'Parse+Subclasses.h'
         filePath =  self.languageName + '/' + fileName
-        source = ''
+        source = self.generateComments(fileName)
 
-        print 'Generate Parse extension {}'.format(filePath)
+        # Save
+        self.saveFile(fileName, source)
 
-        source += self.generateComments(fileName)
+    def generateModelsHeader(self):
+        print 'Generate Models Header'
 
-        # Imports
-        source += 'import Parse\n\n'
-
-        # Extension
-        source += 'extension Parse {\n\n'
-        source += '\t// Call this function before \'Parse.setApplicationId(applicationId: String, clientKey: String)\' in your AppDelegate\n'
-        source += '\tclass func registerSubclasses() {\n'
+        fileName = '{}Models.h'.format(self.prefix)
+        filePath =  self.languageName + '/' + fileName
+        source = self.generateComments(fileName)
 
         for subclass in self.subclasses:
-            source += '\t\t{}.registerSubclass()\n'.format(subclass)
-
-        source += '\t}\n'
-        source += '}'
+            source += '#import "{}.h"\n'.format(subclass)
 
         # Save
         self.saveFile(fileName, source)

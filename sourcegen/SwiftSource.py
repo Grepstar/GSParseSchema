@@ -21,11 +21,8 @@ class SwiftSource(LanguageSource.LanguageSource):
         # Filename
         fileName = subclassName + '.swift'
 
-        # Source
-        source = ''
-
         # Header
-        source += self.generateComments(fileName)
+        source = self.generateComments(fileName)
 
         # Imports
         source += 'import Parse\n\n'
@@ -116,11 +113,10 @@ class SwiftSource(LanguageSource.LanguageSource):
     def generateParseExtension(self):
         fileName = 'Parse+Subclasses.swift'
         filePath =  self.languageName + '/' + fileName
-        source = ''
 
         print 'Generate Parse extension {}'.format(filePath)
 
-        source += self.generateComments(fileName)
+        source = self.generateComments(fileName)
 
         # Imports
         source += 'import Parse\n\n'

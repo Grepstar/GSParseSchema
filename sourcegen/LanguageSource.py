@@ -89,11 +89,8 @@ class LanguageSource(object):
         # Filename
         fileName = subclassName + '.txt'
 
-        # Source
-        source = ''
-
         # Header
-        source += self.generateComments(fileName)
+        source = self.generateComments(fileName)
 
         # Body
         source = 'Source goes here\n\n'
