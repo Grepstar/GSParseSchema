@@ -197,9 +197,9 @@ GSUser.h
 ```objective-c
 #import <Parse/Parse.h>
 
-@class CNAddress;
+@class GSAddress;
 
-@interface CNUser : PFUser
+@interface GSUser : PFUser
 
 + (NSString *)parseClassName;
 
