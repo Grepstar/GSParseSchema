@@ -10,6 +10,8 @@ class LanguageSource(object):
         self.dateString = dateString
         self.shouldSubclassUser = shouldSubclassUser
         self.subclasses = []
+        self.parseFieldsToSkip = ['objectId', 'ACL', 'createdAt', 'updatedAt']
+        self.userFieldsToSkip = ['authData', 'email', 'emailVerified', 'username', 'password', 'role']
 
 #############################################
 # Methods to override in language subclasses

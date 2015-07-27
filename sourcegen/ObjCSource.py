@@ -24,6 +24,26 @@ class ObjCSource(LanguageSource.LanguageSource):
 # Helpers
 ############
 
+    def generateKeysHeader(self, schema, subclassName, isUserClass):
+        source = 'extern const struct {}Key {{\n'.format(subclassName)
+
+        for field, fieldDict in schema['fields'].iteritems():
+            source += '\t__unsafe_unretained NSString *{};\n'.format(field)
+
+        source += '}} {}Key;\n\n'.format(subclassName)
+
+        return source
+
+    def generateKeysImplementation(self, schema, subclassName, isUserClass):
+        source = 'const struct {0}Key {0}Key = {{\n'.format(subclassName)
+
+        for field, fieldDict in schema['fields'].iteritems():
+            source += '\t.{0} = @"{0}",\n'.format(field)
+
+        source += '};\n\n'
+
+        return source
+
     def generateHeaderFile(self, schema, parseClassName, subclassName, isUserClass, subclassImports):
         fileName = subclassName + '.h'
 
@@ -36,21 +56,25 @@ class ObjCSource(LanguageSource.LanguageSource):
         for subclassImport in subclassImports:
             source += '@class {};\n'.format(subclassImport)
 
+        # Keys
+        source += '\n'
+        source += self.generateKeysHeader(schema, subclassName, isUserClass)
+
         # Inheritance
         if isUserClass:
-            source += '\n@interface ' + subclassName + ' : PFUser\n\n'
+            source += '@interface ' + subclassName + ' : PFUser\n\n'
         else:
-            source += '\n@interface ' + subclassName + ' : PFObject<PFSubclassing>\n\n'
+            source += '@interface ' + subclassName + ' : PFObject<PFSubclassing>\n\n'
 
         source += '+ (NSString *)parseClassName;\n\n'
 
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields
-            if field in ['objectId', 'ACL', 'createdAt', 'updatedAt']:
+            if field in self.parseFieldsToSkip:
                 continue
             # Skip PFUser fields
-            elif isUserClass and field in ['authData', 'email', 'emailVerified', 'username', 'password', 'role']:
+            elif isUserClass and field in self.userFieldsToSkip:
                 continue
 
             type = fieldDict['type']
@@ -106,8 +130,12 @@ class ObjCSource(LanguageSource.LanguageSource):
         for subclassImport in subclassImports:
             source += '#import "{}.h"\n'.format(subclassImport)
 
+        # Keys
+        source += '\n'
+        source += self.generateKeysImplementation(schema, subclassName, isUserClass)
+
         # Implementation
-        source += '\n@implementation ' + subclassName + '\n\n'
+        source += '@implementation ' + subclassName + '\n\n'
 
         # Register subclass
         source += '+ (void)load {\n'

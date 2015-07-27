@@ -27,6 +27,22 @@ class SwiftSource(LanguageSource.LanguageSource):
         # Imports
         source += 'import Parse\n\n'
 
+        # Enum
+        source = 'public enum {}Key: String {{\n'.format(subclassName)
+
+        for field, fieldDict in schema['fields'].iteritems():
+
+            # Skip core fields
+            if field in self.parseFieldsToSkip:
+                continue
+            # Skip PFUser fields
+            elif isUserClass and field in self.userFieldsToSkip:
+                continue
+
+            source += '\tcase {0} = "{0}"\n'.format(field)
+
+        source += '}\n\n'
+
         # Inheritance
         if isUserClass:
             source += 'class ' + subclassName + ' : PFUser {\n\n'
@@ -53,10 +69,10 @@ class SwiftSource(LanguageSource.LanguageSource):
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields
-            if field in ['objectId', 'ACL', 'createdAt', 'updatedAt']:
+            if field in self.parseFieldsToSkip:
                 continue
             # Skip PFUser fields
-            elif isUserClass and field in ['authData', 'email', 'emailVerified', 'username', 'password', 'role']:
+            elif isUserClass and field in self.userFieldsToSkip:
                 continue
 
             type = fieldDict['type']

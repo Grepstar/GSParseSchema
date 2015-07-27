@@ -67,6 +67,17 @@ GSAddress.swift
 ```swift
 import Parse
 
+public enum GSAddressKey: String {
+	case city = "city"
+	case country = "country"
+	case stateAbbrevation = "stateAbbrevation"
+	case line2 = "line2"
+	case line1 = "line1"
+	case zipCode = "zipCode"
+	case valid = "valid"
+	case location = "location"
+}
+
 class GSAddress : PFObject, PFSubclassing {
 
 	override class func initialize() {
@@ -102,6 +113,14 @@ class GSAddress : PFObject, PFSubclassing {
 GSUser.swift
 ```swift
 import Parse
+
+public enum GSUserKey: String {
+	case firstName = "firstName"
+	case lastName = "lastName"
+	case profileImage = "profileImage"
+	case phone = "phone"
+	case address = "address"
+}
 
 class GSUser : PFUser {
 
@@ -150,6 +169,17 @@ GSAddress.h
 ```objective-c
 #import <Parse/Parse.h>
 
+extern const struct GSAddressKey {
+	__unsafe_unretained NSString *city;
+	__unsafe_unretained NSString *country;
+	__unsafe_unretained NSString *stateAbbrevation;
+	__unsafe_unretained NSString *line2;
+	__unsafe_unretained NSString *line1;
+	__unsafe_unretained NSString *zipCode;
+	__unsafe_unretained NSString *valid;
+	__unsafe_unretained NSString *location;
+} GSAddressKey;
+
 @interface GSAddress : PFObject<PFSubclassing>
 
 + (NSString *)parseClassName;
@@ -170,6 +200,17 @@ GSAddress.m
 ```objective-c
 #import "GSAddress.h"
 #import <Parse/PFObject+Subclass.h>
+
+const struct GSAddressKey GSAddressKey = {
+	.city = @"city",
+	.country = @"country",
+	.stateAbbrevation = @"stateAbbrevation",
+	.line2 = @"line2",
+	.line1 = @"line1",
+	.zipCode = @"zipCode",
+	.valid = @"valid",
+	.location = @"location",
+};
 
 @implementation GSAddress
 
@@ -197,6 +238,14 @@ GSUser.h
 ```objective-c
 #import <Parse/Parse.h>
 
+extern const struct GSUserKey {
+	__unsafe_unretained NSString *firstName;
+	__unsafe_unretained NSString *lastName;
+	__unsafe_unretained NSString *profileImage;
+	__unsafe_unretained NSString *phone;
+	__unsafe_unretained NSString *address;
+} GSUserKey;
+
 @class GSAddress;
 
 @interface GSUser : PFUser
@@ -218,6 +267,14 @@ GSUser.m
 #import <Parse/PFObject+Subclass.h>
 #import "GSAddress.h"
 
+const struct GSUserKey GSUserKey = {
+	.firstName = @"firstName",
+	.lastName = @"lastName",
+	.profileImage = @"profileImage",
+	.phone = @"phone",
+	.address = @"address",
+};
+
 @implementation GSUser
 
 + (void)load {
@@ -238,6 +295,7 @@ GSUser.m
 ```
 
 ## Features
+- Auto-generation of Parse keys and properties
 - Custom subclass prefix
 - Internal Parse classes are skipped: _User, _Session, _Role, _Installation)
 - Internal Parse fields are skipped: 'objectId', 'ACL', 'createdAt', 'updatedAt'
