@@ -17,18 +17,19 @@ class SwiftSource(LanguageSource.LanguageSource):
         self.generateParseExtension()
 
     def generateSubclass(self, schema, parseClassName='', subclassName='', isUserClass=False, subclassImports=[]):
+        source = ''
 
         # Filename
         fileName = subclassName + '.swift'
 
         # Header
-        source = self.generateComments(fileName)
+        source += self.generateComments(fileName)
 
         # Imports
         source += 'import Parse\n\n'
 
         # Enum
-        source = 'public enum {}Key: String {{\n'.format(subclassName)
+        source += 'public enum {}Key: String {{\n'.format(subclassName)
 
         for field, fieldDict in schema['fields'].iteritems():
 
