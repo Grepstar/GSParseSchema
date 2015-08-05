@@ -302,6 +302,8 @@ const struct GSUserKey GSUserKey = {
 - Internal Parse PFUser fields are skipped: 'authData', 'email', 'emailVerified', 'username', 'password', 'role'
 
 ## TODO
+- Move Enums into Class declaration
+- Suport custom Enum types
 - Use Email/Password authentication: allows REST API to grab list of Parse Apps
 	- User input for selecting app: extract Parse App ID
 	- Move source code into a folder named after Parse App
