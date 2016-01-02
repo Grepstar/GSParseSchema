@@ -30,7 +30,7 @@ class SwiftSource(LanguageSource.LanguageSource):
 
         # Inheritance
         if isPrivateClass:
-            source += 'class ' + subclassName + ' : ' + parseClassName[1:] + ' {\n\n'
+            source += 'class ' + subclassName + ' : PF' + parseClassName[1:] + ' {\n\n'
         else:
             source += 'class ' + subclassName + ' : PFObject, PFSubclassing {\n\n'
 

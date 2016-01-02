@@ -62,7 +62,7 @@ class ObjCSource(LanguageSource.LanguageSource):
 
         # Inheritance
         if isPrivateClass:
-            source += '@interface ' + subclassName + ' : ' + parseClassName[1:] + '\n\n'
+            source += '@interface ' + subclassName + ' : PF' + parseClassName[1:] + '\n\n'
         else:
             source += '@interface ' + subclassName + ' : PFObject<PFSubclassing>\n\n'
 
