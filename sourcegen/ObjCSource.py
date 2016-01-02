@@ -143,9 +143,10 @@ class ObjCSource(LanguageSource.LanguageSource):
         source += '}\n\n'
 
         # Parse Subclassing
-        source += '+ (NSString *)parseClassName {\n'
-        source += '\treturn @"{}";\n'.format(parseClassName)
-        source += '}\n\n'
+        if not isPrivateClass:
+            source += '+ (NSString *)parseClassName {\n'
+            source += '\treturn @"{}";\n'.format(parseClassName)
+            source += '}\n\n'
 
         # Properties
         for field, fieldDict in schema['fields'].iteritems():

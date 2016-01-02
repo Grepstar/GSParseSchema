@@ -45,7 +45,7 @@ class SwiftSource(LanguageSource.LanguageSource):
         # source += '\t\t}\n'
         # source += '\t}\n\n'
 
-        # Only necessary for non-private PFObject subclasses
+        # Parse Subclassing
         if not isPrivateClass:
             source += '\tclass func parseClassName() -> String {\n'
             source += '\t\treturn \"'+ parseClassName + '\"\n'
