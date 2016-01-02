@@ -4,14 +4,20 @@ import os
 
 class LanguageSource(object):
 
-    def __init__(self, languageName, prefix, dateString, shouldSubclassUser):
+    def __init__(self, languageName, prefix, dateString):
         self.languageName = languageName
         self.prefix = prefix
         self.dateString = dateString
-        self.shouldSubclassUser = shouldSubclassUser
         self.subclasses = []
         self.parseFieldsToSkip = ['objectId', 'ACL', 'createdAt', 'updatedAt']
         self.userFieldsToSkip = ['authData', 'email', 'emailVerified', 'username', 'password', 'role']
+        self.fieldsToSkip = {
+            'PFObject' : ['objectId', 'ACL', 'createdAt', 'updatedAt'],
+            '_User' : ['authData', 'email', 'emailVerified', 'username', 'password', 'role'],
+            '_Installation' : ['GCMSenderId', 'appIdentifier', 'appName', 'appVersion', 'badge', 'channels', 'deviceToken', 'deviceType', 'installationId', 'localeIdentifier', 'parseVersion', 'pushType', 'timeZone', 'user'],
+            '_Role' : ['name', 'roles', 'users'],
+            '_Product' : ['download', 'downloadName', 'icon', 'order', 'productIdentifier', 'subtitle', 'title']
+        }
 
 #############################################
 # Methods to override in language subclasses
@@ -30,18 +36,19 @@ class LanguageSource(object):
         # First iteration builds a list of all the subclasses and their cross-references to each other
         for schema in schemas:
             className = schema['className']
-            isUserClass = (className == '_User')
+            isPrivateClass = className.startswith('_')
 
             # Create empty array of imports
             subclassImportsByClass[className] = []
 
-            if self.shouldSubclassUser and isUserClass:
-                # Special case to subclass User
-                baseName = className[1:]
-                subclassName = self.prefix + baseName
-            elif className.startswith('_'):
-                # Skip internal Parse classes (User if not subclassing, Session, Role, Installation)
-                continue
+            if isPrivateClass:
+                # Internal Parse classes
+                if className == '_User' or className == '_Installation':
+                    baseName = className[1:]
+                    subclassName = self.prefix + baseName
+                else:
+                    # Skip classes _Session and _Role
+                    continue
             else:
                 # Custom Parse classes
                 subclassName = self.prefix + className
@@ -67,26 +74,27 @@ class LanguageSource(object):
         # Second iteration creates the source code
         for schema in schemas:
             className = schema['className']
-            isUserClass = (className == '_User')
+            isPrivateClass = className.startswith('_')
             subclassImports = subclassImportsByClass[className]
 
-            if self.shouldSubclassUser and isUserClass:
-                # Special case to subclass User
-                baseName = className[1:]
-                subclassName = self.prefix + baseName
-            elif className.startswith('_'):
-                # Skip internal Parse classes (User if not subclassing, Session, Role, Installation)
-                continue
+            if isPrivateClass:
+                # Internal Parse classes
+                if className == '_User' or className == '_Installation':
+                    baseName = className[1:]
+                    subclassName = self.prefix + baseName
+                else:
+                    # Skip classes _Session and _Role
+                    continue
             else:
                 # Custom Parse classes
                 subclassName = self.prefix + className
 
             # Create the source
             print 'Generate {} subclass {} for Parse class {}'.format(self.languageName, subclassName, className)
-            self.generateSubclass(schema, parseClassName=className, subclassName=subclassName, isUserClass=isUserClass, subclassImports=subclassImports)
+            self.generateSubclass(schema, parseClassName=className, subclassName=subclassName, isPrivateClass=isPrivateClass, subclassImports=subclassImports)
 
     # Override this method to create the source code
-    def generateSubclass(self, schema, parseClassName='', subclassName='', isUserClass=False, subclassImports=[]):
+    def generateSubclass(self, schema, parseClassName='', subclassName='', isPrivateClass=False, subclassImports=[]):
 
         # Filename
         fileName = subclassName + '.txt'
@@ -116,7 +124,7 @@ class LanguageSource(object):
 
     # Helper method to determine subclass name from the Parse model
     def determineSubclassName(self, className=''):
-        if self.shouldSubclassUser and className == '_User':
+        if className == '_User' or className == '_Installation':
             return self.prefix + className[1:]
         elif className.startswith('_'):
             return None

@@ -42,6 +42,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
+The classic (and Parse documented) way to register the subclasses is to override the `initialize` method (demostrated below).  However, this method is not called until the class receive its first message--meaning, you MUST call an instance of this class in order to register it.  Instead of adding this cruft to every subclass, the `Parse+Subclasses' extension is automatically created for you.  This allows you to register all of your subclasses with one line.
+```swift
+
+class Armor : PFObject, PFSubclassing {
+  override class func initialize() {
+    struct Static {
+      static var onceToken : dispatch_once_t = 0;
+    }
+    dispatch_once(&Static.onceToken) {
+      self.registerSubclass()
+    }
+  }
+
+  static func parseClassName() -> String {
+    return "Armor"
+  }
+}
+
+```
+
+NOTE: 
+
 #### `-a` `PARSE_APP_ID`
 Your Parse Application ID
 
@@ -51,15 +73,12 @@ Your Parse Master Key - **NEVER GIVE THIS TO ANYONE AND DO NOT SAVE IT TO YOUR R
 #### `-p` `SUBCLASS_PREFIX`
 The prefix to use for your Subclasses
 
-#### `-u` `SHOULD_SUBCLASS_USER`
-PFUser will be subclassed as <`SUBCLASS_PREFIX`>User
-
 #### `-l` `LANGUAGE`
 The programming language to build your subclasses.  Valid inputs are "swift" or "objc". 
 
 ## Swift Example
 ```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l swift
+$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -l swift
 ```
 Auto-generated classes from Parse Data Schema
 
@@ -79,15 +98,6 @@ public enum GSAddressKey: String {
 }
 
 class GSAddress : PFObject, PFSubclassing {
-
-	override class func initialize() {
-		struct Static {
-			static var onceToken : dispatch_once_t = 0;
-		}
-		dispatch_once(&Static.onceToken) {
-			self.registerSubclass()
-		}
-	}
 
 	class func parseClassName() -> String {
 		return "Address"

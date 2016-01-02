@@ -8,23 +8,23 @@ class ObjCSource(LanguageSource.LanguageSource):
 # Overrides
 ############
 
-    def __init__(self, prefix, dateString, shouldSubclassUser):
-        super(ObjCSource, self).__init__('ObjC', prefix, dateString, shouldSubclassUser)
+    def __init__(self, prefix, dateString):
+        super(ObjCSource, self).__init__('ObjC', prefix, dateString)
 
     def createImplementation(self, schemas=[]):
         super(ObjCSource, self).createImplementation(schemas)
         self.generateSubclassRegistration()
         self.generateModelsHeader()
 
-    def generateSubclass(self, schema, parseClassName='', subclassName='', isUserClass=False, subclassImports=[]):
-        self.generateHeaderFile(schema, parseClassName, subclassName, isUserClass, subclassImports)
-        self.generateImplementationFile(schema, parseClassName, subclassName, isUserClass, subclassImports)
+    def generateSubclass(self, schema, parseClassName='', subclassName='', isPrivateClass=False, subclassImports=[]):
+        self.generateHeaderFile(schema, parseClassName, subclassName, isPrivateClass, subclassImports)
+        self.generateImplementationFile(schema, parseClassName, subclassName, isPrivateClass, subclassImports)
 
 ############
 # Helpers
 ############
 
-    def generateKeysHeader(self, schema, subclassName, isUserClass):
+    def generateKeysHeader(self, schema, subclassName, isPrivateClass):
         source = 'extern const struct {}Key {{\n'.format(subclassName)
 
         for field, fieldDict in schema['fields'].iteritems():
@@ -34,7 +34,7 @@ class ObjCSource(LanguageSource.LanguageSource):
 
         return source
 
-    def generateKeysImplementation(self, schema, subclassName, isUserClass):
+    def generateKeysImplementation(self, schema, subclassName, isPrivateClass):
         source = 'const struct {0}Key {0}Key = {{\n'.format(subclassName)
 
         for field, fieldDict in schema['fields'].iteritems():
@@ -44,7 +44,7 @@ class ObjCSource(LanguageSource.LanguageSource):
 
         return source
 
-    def generateHeaderFile(self, schema, parseClassName, subclassName, isUserClass, subclassImports):
+    def generateHeaderFile(self, schema, parseClassName, subclassName, isPrivateClass, subclassImports):
         fileName = subclassName + '.h'
 
         # Header
@@ -58,11 +58,11 @@ class ObjCSource(LanguageSource.LanguageSource):
 
         # Keys
         source += '\n'
-        source += self.generateKeysHeader(schema, subclassName, isUserClass)
+        source += self.generateKeysHeader(schema, subclassName, isPrivateClass)
 
         # Inheritance
-        if isUserClass:
-            source += '@interface ' + subclassName + ' : PFUser\n\n'
+        if isPrivateClass:
+            source += '@interface ' + subclassName + ' : ' + parseClassName[1:] + '\n\n'
         else:
             source += '@interface ' + subclassName + ' : PFObject<PFSubclassing>\n\n'
 
@@ -71,10 +71,10 @@ class ObjCSource(LanguageSource.LanguageSource):
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields
-            if field in self.parseFieldsToSkip:
+            if field in self.fieldsToSkip['PFObject']:
                 continue
-            # Skip PFUser fields
-            elif isUserClass and field in self.userFieldsToSkip:
+            # Skip private fields
+            elif isPrivateClass and field in self.fieldsToSkip[parseClassName]:
                 continue
 
             type = fieldDict['type']
@@ -117,7 +117,7 @@ class ObjCSource(LanguageSource.LanguageSource):
         # Save
         self.saveFile(fileName, source)
 
-    def generateImplementationFile(self, schema, parseClassName, subclassName, isUserClass, subclassImports):
+    def generateImplementationFile(self, schema, parseClassName, subclassName, isPrivateClass, subclassImports):
         fileName = subclassName + '.m'
 
         # Header
@@ -132,7 +132,7 @@ class ObjCSource(LanguageSource.LanguageSource):
 
         # Keys
         source += '\n'
-        source += self.generateKeysImplementation(schema, subclassName, isUserClass)
+        source += self.generateKeysImplementation(schema, subclassName, isPrivateClass)
 
         # Implementation
         source += '@implementation ' + subclassName + '\n\n'
@@ -151,10 +151,10 @@ class ObjCSource(LanguageSource.LanguageSource):
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields
-            if field in ['objectId', 'ACL', 'createdAt', 'updatedAt']:
+            if field in self.fieldsToSkip['PFObject']:
                 continue
-            # Skip PFUser fields
-            elif isUserClass and field in ['authData', 'email', 'emailVerified', 'username', 'password', 'role']:
+            # Skip private fields
+            elif isPrivateClass and field in self.fieldsToSkip[parseClassName]:
                 continue
 
             # Property declaration

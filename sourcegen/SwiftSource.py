@@ -8,15 +8,15 @@ class SwiftSource(LanguageSource.LanguageSource):
 # Overrides
 ############
 
-    def __init__(self, prefix, dateString, shouldSubclassUser, useOptionals):
-        super(SwiftSource, self).__init__('Swift', prefix, dateString, shouldSubclassUser)
+    def __init__(self, prefix, dateString, useOptionals):
+        super(SwiftSource, self).__init__('Swift', prefix, dateString)
         self.useOptionals = useOptionals
 
     def createImplementation(self, schemas=[]):
         super(SwiftSource, self).createImplementation(schemas)
         self.generateParseExtension()
 
-    def generateSubclass(self, schema, parseClassName='', subclassName='', isUserClass=False, subclassImports=[]):
+    def generateSubclass(self, schema, parseClassName='', subclassName='', isPrivateClass=False, subclassImports=[]):
         source = ''
 
         # Filename
@@ -29,22 +29,24 @@ class SwiftSource(LanguageSource.LanguageSource):
         source += 'import Parse\n\n'
 
         # Inheritance
-        if isUserClass:
-            source += 'class ' + subclassName + ' : PFUser {\n\n'
+        if isPrivateClass:
+            source += 'class ' + subclassName + ' : ' + parseClassName[1:] + ' {\n\n'
         else:
             source += 'class ' + subclassName + ' : PFObject, PFSubclassing {\n\n'
 
-        source += '\toverride class func initialize() {\n'
-        source += '\t\tstruct Static {\n'
-        source += '\t\t\tstatic var onceToken : dispatch_once_t = 0;\n'
-        source += '\t\t}\n'
-        source += '\t\tdispatch_once(&Static.onceToken) {\n'
-        source += '\t\t\tself.registerSubclass()\n'
-        source += '\t\t}\n'
-        source += '\t}\n\n'
+        # Automatic registration of Parse subclass --> https://parse.com/docs/ios/guide#objects-subclassing-pfobject
+        # However, this only works if you send a message to this class prior to initializing Parse.
+        # source += '\toverride class func initialize() {\n'
+        # source += '\t\tstruct Static {\n'
+        # source += '\t\t\tstatic var onceToken : dispatch_once_t = 0;\n'
+        # source += '\t\t}\n'
+        # source += '\t\tdispatch_once(&Static.onceToken) {\n'
+        # source += '\t\t\tself.registerSubclass()\n'
+        # source += '\t\t}\n'
+        # source += '\t}\n\n'
 
-        # Only necessary for PFObject subclasses
-        if not isUserClass:
+        # Only necessary for non-private PFObject subclasses
+        if not isPrivateClass:
             source += '\tclass func parseClassName() -> String {\n'
             source += '\t\treturn \"'+ parseClassName + '\"\n'
             source += '\t}\n\n'
@@ -56,10 +58,10 @@ class SwiftSource(LanguageSource.LanguageSource):
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields
-            if field in self.parseFieldsToSkip:
+            if field in self.fieldsToSkip['PFObject']:
                 continue
-            # Skip PFUser fields
-            elif isUserClass and field in self.userFieldsToSkip:
+            # Skip private fields
+            elif isPrivateClass and field in self.fieldsToSkip[parseClassName]:
                 continue
 
             source += '\t\tcase {0} = "{0}"\n'.format(field)
@@ -72,10 +74,10 @@ class SwiftSource(LanguageSource.LanguageSource):
         for field, fieldDict in schema['fields'].iteritems():
 
             # Skip core fields
-            if field in self.parseFieldsToSkip:
+            if field in self.fieldsToSkip['PFObject']:
                 continue
-            # Skip PFUser fields
-            elif isUserClass and field in self.userFieldsToSkip:
+            # Skip private fields
+            elif isPrivateClass and field in self.fieldsToSkip[parseClassName]:
                 continue
 
             type = fieldDict['type']

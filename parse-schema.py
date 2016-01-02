@@ -21,8 +21,6 @@ def main():
                       help="Parse Master Key",)
     parser.add_option("-p", "--prefix", dest="subclass_prefix",
                       help="Subclass Prefix",)
-    parser.add_option("-u", "--user", action="store_true", dest="subclass_user",
-                      help="Subclass PFUser",)
     parser.add_option("-l", "--language", dest="language",
                       help="Language to build templates",)
     (options, args) = parser.parse_args()
@@ -41,11 +39,6 @@ def main():
         SUBCLASS_PREFIX = options.subclass_prefix
     else:
         assert False, 'SUBCLASS_PREFIX is blank!  You should probably use a custom prefix.'
-
-    if options.subclass_user:
-        SHOULD_SUBCLASS_USER = options.subclass_user
-    else:
-        SHOULD_SUBCLASS_USER = False
 
     if options.language:
         LANGUAGE = options.language
@@ -78,9 +71,9 @@ def main():
     today = datetime.date.today().strftime('%m/%d/%y')
 
     if LANGUAGE == 'swift':
-        generator = SwiftSource.SwiftSource(SUBCLASS_PREFIX, today, SHOULD_SUBCLASS_USER, True)
+        generator = SwiftSource.SwiftSource(SUBCLASS_PREFIX, today, True)
     if LANGUAGE == 'objc':
-        generator = ObjCSource.ObjCSource(SUBCLASS_PREFIX, today, SHOULD_SUBCLASS_USER)
+        generator = ObjCSource.ObjCSource(SUBCLASS_PREFIX, today)
 
     generator.createImplementation(schemas)
 
