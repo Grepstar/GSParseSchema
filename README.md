@@ -121,8 +121,6 @@ class GSUser : PFUser {
 - Internal Parse PFUser fields are skipped: 'authData', 'email', 'emailVerified', 'username', 'password', 'role'
 
 ## TODO
-- Move Enums into Class declaration
-- Suport custom Enum types
 - Use file templates instead of string concatenation for generating source code
 - Create boilerplate Swift extensions for adding addtional methods
 - Create brew package
