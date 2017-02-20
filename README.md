@@ -3,7 +3,7 @@ Parse Schema iOS subclass generation in Swift and ObjC.
 
 A python script to generate Swift and ObjC subclasses from your Parse App Schema.
 
-Tested with Swift 2.0 and Xcode 7-beta.
+Tested with Swift 3.0 and Xcode 8.
 
 ## Usage
 
@@ -23,44 +23,7 @@ Your custom classes will be generated in a local `ObjC/` folder.
 ### Add files to your Xcode project
 Drag and drop the generated files into your project.
 
-### Call `Parse.registerSubclasses()` in your AppDelegate
-Register your subclasses in your AppDelegate.swift before `Parse.setApplicationId(applicationId: String, clientKey: String)`
-```swift
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-	var window: UIWindow?
-    
-	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool
-	{
-        Parse.registerSubclasses()
-        Parse.setApplicationId(applicationId: String, clientKey: String)
-       
-        ...
-         
-    }
-}
-```
-
-The classic (and Parse documented) way to register the subclasses is to override the `initialize` method (demostrated below).  However, this method is not called until the class receive its first message--meaning, you MUST call an instance of this class in order to register it.  Instead of adding this cruft to every subclass, the `Parse+Subclasses' extension is automatically created for you.  This allows you to register all of your subclasses with one line.
-```swift
-
-class Armor : PFObject, PFSubclassing {
-  override class func initialize() {
-    struct Static {
-      static var onceToken : dispatch_once_t = 0;
-    }
-    dispatch_once(&Static.onceToken) {
-      self.registerSubclass()
-    }
-  }
-
-  static func parseClassName() -> String {
-    return "Armor"
-  }
-}
-
-```
+### `Parse.registerSubclasses()` is no longer necessary with latest Parse SDK
 
 NOTE: 
 
@@ -151,20 +114,6 @@ class GSUser : PFUser {
 	@NSManaged var phone: NSNumber?
 	@NSManaged var address: GSAddress?
 
-}
-```
-
-Parse+Subclasses.swift
-```swift
-import Parse
-
-extension Parse {
-
-	// Call this function before setApplicationId:clientKey: in your AppDelegate
-	class func registerSubclasses() {
-		GSAddress.registerSubclass()
-		GSUser.registerSubclass()
-	}
 }
 ```
 
@@ -314,9 +263,6 @@ const struct GSUserKey GSUserKey = {
 ## TODO
 - Move Enums into Class declaration
 - Suport custom Enum types
-- Use Email/Password authentication: allows REST API to grab list of Parse Apps
-	- User input for selecting app: extract Parse App ID
-	- Move source code into a folder named after Parse App
 - Use file templates instead of string concatenation for generating source code
 - Create boilerplate Swift extensions for adding addtional methods
 - Create brew package
