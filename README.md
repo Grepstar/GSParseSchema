@@ -8,6 +8,7 @@ Tested with Swift 3.0 and Xcode 8.
 ## Usage
 
 ### Generate subclasses
+
 Swift
 ```
 $ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l swift
@@ -25,7 +26,8 @@ Drag and drop the generated files into your project.
 
 ### `Parse.registerSubclasses()` is no longer necessary with latest Parse SDK
 
-NOTE: 
+#### `-u` `PARSE_SERVER_URL`
+The Parse Server API URL.  Defaults to http://localhost:1337/parse.
 
 #### `-a` `PARSE_APP_ID`
 Your Parse Application ID
