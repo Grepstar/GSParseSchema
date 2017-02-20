@@ -14,7 +14,6 @@ class SwiftSource(LanguageSource.LanguageSource):
 
     def createImplementation(self, schemas=[]):
         super(SwiftSource, self).createImplementation(schemas)
-        self.generateParseExtension()
 
     def generateSubclass(self, schema, parseClassName='', subclassName='', isPrivateClass=False, subclassImports=[]):
         source = ''
@@ -34,17 +33,6 @@ class SwiftSource(LanguageSource.LanguageSource):
         else:
             source += 'class ' + subclassName + ' : PFObject, PFSubclassing {\n\n'
 
-        # Automatic registration of Parse subclass --> https://parse.com/docs/ios/guide#objects-subclassing-pfobject
-        # However, this only works if you send a message to this class prior to initializing Parse.
-        # source += '\toverride class func initialize() {\n'
-        # source += '\t\tstruct Static {\n'
-        # source += '\t\t\tstatic var onceToken : dispatch_once_t = 0;\n'
-        # source += '\t\t}\n'
-        # source += '\t\tdispatch_once(&Static.onceToken) {\n'
-        # source += '\t\t\tself.registerSubclass()\n'
-        # source += '\t\t}\n'
-        # source += '\t}\n\n'
-
         # Parse Subclassing
         if not isPrivateClass:
             source += '\tclass func parseClassName() -> String {\n'
@@ -53,7 +41,7 @@ class SwiftSource(LanguageSource.LanguageSource):
 
         # Keys Enum
         source += '\t// MARK: Parse Keys\n\n'
-        source += '\tenum Keys: String {\n'
+        source += '\tclass Key: PFObject.Key {\n'
 
         for field, fieldDict in schema['fields'].iteritems():
 
@@ -64,7 +52,7 @@ class SwiftSource(LanguageSource.LanguageSource):
             elif isPrivateClass and field in self.fieldsToSkip[parseClassName]:
                 continue
 
-            source += '\t\tcase {0} = "{0}"\n'.format(field)
+            source += '\t\tstatic var {0}: String = "{0}"\n'.format(field)
 
         source += '\t}\n\n'
 
@@ -91,7 +79,7 @@ class SwiftSource(LanguageSource.LanguageSource):
                 languageType = 'Bool'
                 declareAsManaged = False
             elif type == 'Date':
-                languageType = 'NSDate'
+                languageType = 'Date'
             elif type == 'GeoPoint':
                 languageType = 'PFGeoPoint'
             elif type == 'File':
@@ -130,28 +118,3 @@ class SwiftSource(LanguageSource.LanguageSource):
 ############
 # Helpers
 ############
-
-    def generateParseExtension(self):
-        fileName = 'Parse+Subclasses.swift'
-        filePath =  self.languageName + '/' + fileName
-
-        print 'Generate Parse extension {}'.format(filePath)
-
-        source = self.generateComments(fileName)
-
-        # Imports
-        source += 'import Parse\n\n'
-
-        # Extension
-        source += 'extension Parse {\n\n'
-        source += '\t// Call this function before \'Parse.setApplicationId(applicationId: String, clientKey: String)\' in your AppDelegate\n'
-        source += '\tclass func registerSubclasses() {\n'
-
-        for subclass in self.subclasses:
-            source += '\t\t{}.registerSubclass()\n'.format(subclass)
-
-        source += '\t}\n'
-        source += '}'
-
-        # Save
-        self.saveFile(fileName, source)

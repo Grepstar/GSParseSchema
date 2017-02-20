@@ -3,7 +3,7 @@ __email__ = "daniel.hallman@grepstar.net"
 __copyright__ = "Copyright 2015, Grepstar, LLC"
 __license__ = "MIT"
 
-import json, httplib, os
+import json, urllib2, os
 import datetime
 
 from optparse import OptionParser
@@ -15,6 +15,8 @@ PARSE_CLASS_PREFIX = "PF"
 
 def main():
     parser = OptionParser()
+    parser.add_option("-u", "--url", dest="parse_server_url",
+                      help="Parse Server URL",)
     parser.add_option("-a", "--parseappid", dest="parse_app_id",
                       help="Parse App ID",)
     parser.add_option("-m", "--parsemaster", dest="parse_master_key",
@@ -25,10 +27,16 @@ def main():
                       help="Language to build templates",)
     (options, args) = parser.parse_args()
 
+    if options.parse_server_url:
+        PARSE_SERVER_URL = options.parse_server_url
+    else:
+        PARSE_SERVER_URL = 'http://localhost:1337/parse'
+        # assert False, 'PARSE_SERVER_URL is blank!'
+
     if options.parse_app_id:
         PARSE_APP_ID = options.parse_app_id
     else:
-        assert False, 'PARSE_APP_ID is blank!  Visit https://www.parse.com to obtain your keys.'
+        assert False, 'PARSE_APP_ID is blank!'
 
     if options.parse_master_key:
         PARSE_MASTER_KEY = options.parse_master_key
@@ -47,27 +55,15 @@ def main():
     else:
         LANGUAGE = "swift"
 
-    # email = ''
-    # password = ''
-    # connection = httplib.HTTPSConnection('api.parse.com', 443)
-    # connection.connect()
-    # connection.request('GET', '/1/apps', "", {
-    #        "X-Parse-Email": email,
-    #        "X-Parse-Password": password,
-    #        "Content-Type": "application/json"
-    #      })
-    # result = json.loads(connection.getresponse().read())
-
-    connection = httplib.HTTPSConnection('api.parse.com', 443)
-    connection.connect()
-    connection.request('GET', '/1/schemas', "", {
-           "X-Parse-Application-Id": PARSE_APP_ID,
-           "X-Parse-Master-Key": PARSE_MASTER_KEY,
-           "Content-Type": "application/json"
-         })
-    result = json.loads(connection.getresponse().read())
-
+    req = urllib2.Request(PARSE_SERVER_URL+'/schemas')
+    req.add_header("X-Parse-Application-Id", PARSE_APP_ID)
+    req.add_header("X-Parse-Master-Key", PARSE_MASTER_KEY)
+    req.add_header("Content-Type", "application/json")
+    opener = urllib2.build_opener()
+    f = opener.open(req)
+    result = json.loads(f.read())
     schemas = result['results']
+
     today = datetime.date.today().strftime('%m/%d/%y')
 
     if LANGUAGE == 'swift':
