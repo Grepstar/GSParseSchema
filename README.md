@@ -49,23 +49,26 @@ GSAddress.swift
 ```swift
 import Parse
 
-public enum GSAddressKey: String {
-	case city = "city"
-	case country = "country"
-	case stateAbbrevation = "stateAbbrevation"
-	case line2 = "line2"
-	case line1 = "line1"
-	case zipCode = "zipCode"
-	case valid = "valid"
-	case location = "location"
-}
-
 class GSAddress : PFObject, PFSubclassing {
 
 	class func parseClassName() -> String {
 		return "Address"
 	}
 
+	// MARK: Parse Keys
+
+	class Key: PFObject.Key {
+		static var startDate: String = "startDate"
+		static var city: String = "city"
+		static var country: String = "country"
+		static var stateAbbrevation: String = "stateAbbrevation"
+		static var line2: String = "line2"
+		static var line1: String = "line1"
+		static var zipCode: String = "zipCode"
+		static var valid: String = "valid"
+		static var location: String = "location"
+	}
+		
 	// MARK: Properties
 
 	@NSManaged var city: String?
@@ -87,23 +90,14 @@ GSUser.swift
 ```swift
 import Parse
 
-public enum GSUserKey: String {
-	case firstName = "firstName"
-	case lastName = "lastName"
-	case profileImage = "profileImage"
-	case phone = "phone"
-	case address = "address"
-}
-
 class GSUser : PFUser {
 
-	override class func initialize() {
-		struct Static {
-			static var onceToken : dispatch_once_t = 0;
-		}
-		dispatch_once(&Static.onceToken) {
-			self.registerSubclass()
-		}
+	class Key: PFObject.Key {
+		static var firstName: String = "firstName"
+		static var lastName: String = "lastName"
+		static var profileImage: String = "profileImage"
+		static var phone: String = "phone"
+		static var address: String = "address"
 	}
 
 	// MARK: Properties
@@ -115,142 +109,6 @@ class GSUser : PFUser {
 	@NSManaged var address: GSAddress?
 
 }
-```
-
-## ObjC Example
-```
-$ python parse-schema.py -a <PARSE_APP_ID> -m <PARSE_MASTER_KEY> -p <SUBCLASS_PREFIX> -u -l objc
-```
-
-Auto-generated classes from Parse Data Schema
-
-GSAddress.h
-```objective-c
-#import <Parse/Parse.h>
-
-extern const struct GSAddressKey {
-	__unsafe_unretained NSString *city;
-	__unsafe_unretained NSString *country;
-	__unsafe_unretained NSString *stateAbbrevation;
-	__unsafe_unretained NSString *line2;
-	__unsafe_unretained NSString *line1;
-	__unsafe_unretained NSString *zipCode;
-	__unsafe_unretained NSString *valid;
-	__unsafe_unretained NSString *location;
-} GSAddressKey;
-
-@interface GSAddress : PFObject<PFSubclassing>
-
-+ (NSString *)parseClassName;
-
-@property (nonatomic, strong) NSString *city;
-@property (nonatomic, strong) NSString *country;
-@property (nonatomic, strong) NSString *stateAbbrevation;
-@property (nonatomic, strong) NSString *line2;
-@property (nonatomic, strong) NSString *line1;
-@property (nonatomic, strong) NSNumber *zipCode;
-@property (nonatomic, assign) BOOL valid;
-@property (nonatomic, strong) PFGeoPoint *location;
-
-@end
-```
-
-GSAddress.m
-```objective-c
-#import "GSAddress.h"
-#import <Parse/PFObject+Subclass.h>
-
-const struct GSAddressKey GSAddressKey = {
-	.city = @"city",
-	.country = @"country",
-	.stateAbbrevation = @"stateAbbrevation",
-	.line2 = @"line2",
-	.line1 = @"line1",
-	.zipCode = @"zipCode",
-	.valid = @"valid",
-	.location = @"location",
-};
-
-@implementation GSAddress
-
-+ (void)load {
-	[self registerSubclass];
-}
-
-+ (NSString *)parseClassName {
-	return @"Address";
-}
-
-@dynamic city;
-@dynamic country;
-@dynamic stateAbbrevation;
-@dynamic line2;
-@dynamic line1;
-@dynamic zipCode;
-@dynamic valid;
-@dynamic location;
-
-@end
-```
-
-GSUser.h
-```objective-c
-#import <Parse/Parse.h>
-
-extern const struct GSUserKey {
-	__unsafe_unretained NSString *firstName;
-	__unsafe_unretained NSString *lastName;
-	__unsafe_unretained NSString *profileImage;
-	__unsafe_unretained NSString *phone;
-	__unsafe_unretained NSString *address;
-} GSUserKey;
-
-@class GSAddress;
-
-@interface GSUser : PFUser
-
-+ (NSString *)parseClassName;
-
-@property (nonatomic, strong) NSString *firstName;
-@property (nonatomic, strong) NSString *lastName;
-@property (nonatomic, strong) PFFile *profileImage;
-@property (nonatomic, strong) NSNumber *phone;
-@property (nonatomic, strong) GSAddress *address;
-
-@end
-```
-
-GSUser.m
-```objective-c
-#import "GSUser.h"
-#import <Parse/PFObject+Subclass.h>
-#import "GSAddress.h"
-
-const struct GSUserKey GSUserKey = {
-	.firstName = @"firstName",
-	.lastName = @"lastName",
-	.profileImage = @"profileImage",
-	.phone = @"phone",
-	.address = @"address",
-};
-
-@implementation GSUser
-
-+ (void)load {
-	[self registerSubclass];
-}
-
-+ (NSString *)parseClassName {
-	return @"_User";
-}
-
-@dynamic firstName;
-@dynamic lastName;
-@dynamic profileImage;
-@dynamic phone;
-@dynamic address;
-
-@end
 ```
 
 ## Features
